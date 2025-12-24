@@ -1,13 +1,13 @@
 Chahida
 
-Chahida is a campus-only web platform built to help university students support each other with everyday needs — from emergency blood requests to lost items, academic help, and peer connections.
+Chahida is a campus-only web platform built to help university students support each other with everyday needs,from emergency blood requests to lost items, academic help, and peer connections.
 
 The goal is simple: replace scattered WhatsApp groups and notice boards with one organized, searchable place.
 
 What Chahida Does
 
 Emergency Blood Requests
-Blood group–based posts with urgency and donor discovery
+Blood group based posts with urgency and donor discovery
 
 Lost & Found
 Report and recover lost items by location and category
