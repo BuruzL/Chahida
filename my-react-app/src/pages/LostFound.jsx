@@ -8,12 +8,27 @@ export default function LostAndFound() {
     name: "",
     location: "",
     description: "",
+    img: ""
   });
+
+  const styles= {
+    img:{
+      width: "100%",
+      maxWidth: "260px",
+      aspectRatio: 4 / 3,
+      objectFit: "cover",
+      borderRadius: "12px"
+    },
+    
+    type:{
+      color: "Red"
+    }
+  }
 
   const postItem = () => {
     if (!form.name || !form.location) return;
-    setItems([{ ...form, id: Date.now() }, ...items]);
-    setForm({ type: "Lost", name: "", location: "", description: "" });
+    setItems(prev => [{ ...form, id: Date.now() }, ...prev]);
+    setForm({ type: "Lost", name: "", location: "", description: "" , img: ""});
   };
 
   return (
@@ -46,6 +61,17 @@ export default function LostAndFound() {
           value={form.description}
           onChange={(e) => setForm({ ...form, description: e.target.value })}
         />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const imageURL = URL.createObjectURL(file);
+            setForm(prev => ({ ...prev, img: imageURL }));
+          }}
+        />
 
         <button onClick={postItem}>Post</button>
       </div>
@@ -53,7 +79,8 @@ export default function LostAndFound() {
       <div className="lf-list">
         {items.map((item) => (
           <div key={item.id} className="lf-card">
-            <h3>{item.type}: {item.name}</h3>
+            {item.img && <img src={item.img} style={styles.img}/>}
+            <h3 style={styles.type}>{item.type}: {item.name}</h3>
             <p className="loc">Location: {item.location}</p>
             <p>{item.description}</p>
           </div>

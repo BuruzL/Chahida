@@ -11,9 +11,20 @@ export default function BuySell() {
     contact: ""
   });
 
+  const styles= {
+    img:{
+      width: "100%",
+      maxWidth: "260px",
+      aspectRatio: 4 / 3,
+      objectFit: "cover",
+      borderRadius: "12px"
+    }
+  }
+
+
   const postItem = () => {
     if (!form.title || !form.price || !form.contact) return;
-    setItems([{ ...form, id: Date.now() }, ...items]);
+    setItems(prev => [{ ...form, id: Date.now() }, ...prev]);
     setForm({ title: "", price: "", condition: "New", description: "", contact: "" });
   };
 
@@ -40,13 +51,24 @@ export default function BuySell() {
 
         <textarea placeholder="Description" value={form.description}
           onChange={e => setForm({ ...form, description: e.target.value })} />
+          <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => {
+            const file = e.target.files[0];
+            if (!file) return;
 
+            const imageURL = URL.createObjectURL(file);
+            setForm(prev => ({ ...prev, img: imageURL }));
+          }}
+        />
         <button onClick={postItem}>Post Item</button>
       </div>
 
       <div className="bs-list">
         {items.map(item => (
           <div key={item.id} className="bs-card">
+            {item.img && <img src={item.img} style={styles.img}/>}
             <h3>{item.title}</h3>
             <p className="price">${item.price}</p>
             <p className="cond">{item.condition}</p>
