@@ -31,7 +31,7 @@ export default function App(){
             <Route path="/post/:id" element={<PostDetails />} />
             <Route path="/create" element={<CreatePost />} />
             <Route path="/category/:tag" element={<Category />} />
-            <Route path="/lost-found" element={<LostFound />} />
+            <Route path="/lost-found" element={<LostFound/>}/>
             <Route path="/buy-sell" element={<BuySell />} />
             <Route path="/buddy" element={<Buddy />} />
             <Route path="/settings" element={<Settings />} />
