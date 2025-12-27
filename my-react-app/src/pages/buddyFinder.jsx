@@ -4,63 +4,90 @@ import React, { useState } from 'react';
 const studyBuddiesData = [
   {
     id: 1,
-    name: "Alex Chen",
+    name: "Tamanna Haque",
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Alex",
     subjects: ["Mathematics", "Physics"],
     availability: "Weekdays",
     level: "University",
     bio: "Looking for study partners for calculus and quantum physics. Love collaborative problem-solving!",
     online: true,
+    phone: "01847832922",
+    socials: [
+      { type: 'Instagram', handle: '@oyeshi111' },
+      { type: 'LinkedIn', handle: 'oyeshi111' },
+    ],
   },
   {
     id: 2,
-    name: "Sarah Johnson",
+    name: "Faria Jahan",
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah",
     subjects: ["Computer Science", "Data Science"],
     availability: "Evenings",
     level: "Graduate",
     bio: "CS grad student focusing on ML. Happy to help with programming concepts!",
     online: true,
+    phone: "01847362946",
+    socials: [
+      { type: 'Twitter', handle: '@peek-a-boo' },
+      { type: 'LinkedIn', handle: 'faria_jahan' },
+    ],
   },
   {
     id: 3,
-    name: "Marcus Williams",
+    name: "Farhana Alam",
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Marcus",
     subjects: ["Biology", "Chemistry"],
     availability: "Weekends",
     level: "Pre-Med",
     bio: "Pre-med student preparing for MCAT. Let's study organic chemistry together!",
     online: false,
+    phone: "01849374692",
+    socials: [
+      { type: 'Instagram', handle: '@Farhu_22' },
+    ],
   },
   {
     id: 4,
-    name: "Priya Patel",
+    name: "Nusrat Jahan Priya",
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Priya",
     subjects: ["Economics", "Statistics"],
     availability: "Flexible",
     level: "University",
     bio: "Econ major with a passion for data analysis. Great at explaining complex concepts!",
     online: true,
+    phone: "+1 (555) 456-7890",
+    socials: [
+      { type: 'LinkedIn', handle: 'priya_priya' },
+    ],
   },
   {
     id: 5,
-    name: "Jordan Lee",
+    name: "Jahin Hasan",
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Jordan",
     subjects: ["History", "Literature"],
     availability: "Mornings",
     level: "University",
     bio: "History buff and bookworm. Love discussing ideas and essay writing strategies.",
     online: false,
+    phone: "+1 (555) 567-8901",
+    socials: [
+      { type: 'Twitter', handle: '@jahin007' },
+    ],
   },
   {
     id: 6,
-    name: "Emma Thompson",
+    name: "Lamia Buruz",
     avatar: "https://api.dicebear.com/7.x/avataaars/svg?seed=Emma",
     subjects: ["Psychology", "Neuroscience"],
     availability: "Afternoons",
     level: "Graduate",
     bio: "Researching cognitive psychology. Interested in study groups for research methods.",
     online: true,
+    phone: "+1 (555) 678-9012",
+    socials: [
+      { type: 'LinkedIn', handle: 'Lamia_buruz' },
+      { type: 'Instagram', handle: '@Lamia03' },
+    ],
   },
 ];
 
@@ -294,6 +321,19 @@ const styles = {
     boxShadow: '0 4px 15px -3px rgba(249, 115, 22, 0.4)',
     transition: 'all 0.2s ease',
   },
+  contactBox: {
+    marginTop: '0.75rem',
+    padding: '0.75rem 1rem',
+    borderRadius: '0.75rem',
+    background: 'rgba(249, 115, 22, 0.06)',
+    border: '1px solid rgba(249, 115, 22, 0.12)',
+    color: '#92400e',
+    fontSize: '0.9375rem',
+  },
+  contactItem: {
+    display: 'block',
+    marginBottom: '0.25rem',
+  },
   
   // Stats section
   statsSection: {
@@ -366,6 +406,7 @@ const UsersIcon = () => (
 // Study Buddy Card Component
 const StudyBuddyCard = ({ buddy }) => {
   const [isHovered, setIsHovered] = useState(false);
+  const [showContact, setShowContact] = useState(false);
   
   return (
     <div
@@ -405,19 +446,34 @@ const StudyBuddyCard = ({ buddy }) => {
           <ClockIcon />
           {buddy.availability}
         </span>
-        <button 
-          style={styles.connectButton}
-          onMouseEnter={(e) => {
-            e.target.style.transform = 'scale(1.05)';
-            e.target.style.boxShadow = '0 6px 20px -3px rgba(249, 115, 22, 0.5)';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.transform = 'scale(1)';
-            e.target.style.boxShadow = '0 4px 15px -3px rgba(249, 115, 22, 0.4)';
-          }}
-        >
-          Connect
-        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <button 
+            style={styles.connectButton}
+            onClick={() => setShowContact(!showContact)}
+            onMouseEnter={(e) => {
+              e.target.style.transform = 'scale(1.05)';
+              e.target.style.boxShadow = '0 6px 20px -3px rgba(249, 115, 22, 0.5)';
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.transform = 'scale(1)';
+              e.target.style.boxShadow = '0 4px 15px -3px rgba(249, 115, 22, 0.4)';
+            }}
+          >
+            {showContact ? 'Hide Contact' : 'Connect'}
+          </button>
+        </div>
+        {showContact && (
+          <div style={styles.contactBox} aria-live="polite">
+            <span style={styles.contactItem}><strong>Phone:</strong> {buddy.phone || 'Not provided'}</span>
+            {buddy.socials && buddy.socials.length > 0 ? (
+              buddy.socials.map((s, i) => (
+                <span key={i} style={styles.contactItem}><strong>{s.type}:</strong> {s.handle}</span>
+              ))
+            ) : (
+              <span style={styles.contactItem}>No socials provided</span>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
