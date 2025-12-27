@@ -47,9 +47,11 @@ React Router
 
 Context API
 
-Mock data with localStorage
+MongoDB
 
-Backend (Node.js) planned
+NodeJs
+
+ExpressJs
 
 Run Locally
 git clone https://github.com/BuruzL/Chahida.git
@@ -59,7 +61,7 @@ npm run dev
 
 Demo Tips
 
-Login using any email from Directory
+Login using any email from Director or create your own account
 
 Try searching: B+, CSE110, wallet, Nazrul Hall
 
@@ -67,10 +69,5 @@ Reset demo data from Settings
 
 Purpose
 
-This project was built for hackathon use to demonstrate:
-
 Practical campus problem-solving
 
-Clean frontend architecture
-
-Realistic user workflows
