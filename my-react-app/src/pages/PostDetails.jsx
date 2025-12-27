@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { addComment, bumpView, getDB, updatePost } from "../lib/db";
+import { api } from "../lib/api";
 import TagPill from "../components/TagPill";
 import { formatTime } from "../lib/utils";
 import { useAuth } from "../context/AuthContext";
@@ -12,22 +13,54 @@ export default function PostDetails(){
   const [tick, setTick] = useState(0);
   const [text, setText] = useState("");
 
-  const db = useMemo(() => getDB(), [tick]);
-  const post = db.posts.find(p => p.id === id);
-  const comments = db.comments[id] || [];
+  const [post, setPost] = useState(null);
+  const [comments, setComments] = useState([]);
+  const localDB = useMemo(() => getDB(), [tick]);
 
-  React.useEffect(() => {
-    if(post){
-      bumpView(id);
-      setTick(x=>x+1);
-    }
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const data = await api.get("/api/posts");
+        const found = (data || []).find(p => String(p._id) === id || String(p.id) === id);
+        if(found){
+          if(!mounted) return;
+          setPost(found);
+          setComments([]); // backend comments not implemented yet
+        } else {
+          // fallback to local DB
+          const lp = localDB.posts.find(p => p.id === id);
+          if(lp){
+            setPost(lp);
+            setComments(localDB.comments[id] || []);
+          }
+        }
+      } catch (err) {
+        // on error, fallback to local DB
+        const lp = localDB.posts.find(p => p.id === id);
+        if(lp){
+          setPost(lp);
+          setComments(localDB.comments[id] || []);
+        }
+      }
+    })();
+
+    return () => { mounted = false };
     // eslint-disable-next-line
-  }, [id]);
+  }, [id, tick]);
 
   if(!post) return <EmptyState title="Post not found" hint="Go back to the feed and open another post." />;
 
   const setStatus = (status) => {
+    // update both local DB and (optimistically) the backend
     updatePost(id, { status });
+    (async () => {
+      try {
+        await api.post(`/api/posts`, { status, _id: post._id, id });
+      } catch (e) {
+        // ignore backend failure for now
+      }
+    })();
     setTick(x=>x+1);
   };
 

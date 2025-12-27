@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { addPost, getDB } from "../lib/db";
+import { getDB } from "../lib/db";
+import { api } from "../lib/api";
 import { META } from "../data/seed";
 import { useAuth } from "../context/AuthContext";
 
@@ -47,18 +48,26 @@ export default function CreatePost(){
       alert("Please fill Title and Description.");
       return;
     }
-    const post = addPost({
-      tag,
-      title: title.trim(),
-      body: body.trim(),
-      status,
-      urgency,
-      authorId: author.id,
-      authorName: author.name,
-      location: { hall, spot, room: room.trim() },
-      meta: buildMeta(),
-    });
-    nav(`/post/${post.id}`);
+    (async () => {
+      try {
+        const payload = {
+          tag,
+          title: title.trim(),
+          body: body.trim(),
+          status,
+          urgency,
+          authorId: author.id,
+          authorName: author.name,
+          location: { hall, spot, room: room.trim() },
+          meta: buildMeta(),
+        };
+        const saved = await api.post("/api/posts", payload);
+        nav(`/post/${saved._id || saved.id}`);
+      } catch (err) {
+        console.error(err);
+        alert("Failed to publish post. Try again.");
+      }
+    })();
   };
 
   return (
