@@ -2,56 +2,66 @@ import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 import cors from "cors";
-// Ensure fetch is available in older Node versions by using node-fetch
-// import fetch from 'node-fetch';
+import mongoose from "mongoose";
+
+import aiRoutes from "./src/routes/aiRoutes.js";
+import authRoutes from "./src/routes/authRoutes.js";
+import postRoutes from "./src/routes/postRoutes.js";
+import lostFoundRoutes from "./src/routes/lostFoundRoutes.js";
 
 const app = express();
-app.use(cors());
-app.use(express.json());
 
-const sessions = {};
-console.log("GEMINI:", process.env.GEMINI_API_KEY ? "LOADED" : "MISSING");
+// Allow larger JSON bodies (images in base64 from frontend)
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-app.post("/api/ai/ask", async (req, res) => {
-  const { message, sessionId = "default" } = req.body;
+const corsOptions = {
+  origin: process.env.CLIENT_URL || "http://localhost:5173",
+  credentials: true,
+};
+app.use(cors(corsOptions));
 
-  if (!sessions[sessionId]) {
-    sessions[sessionId] = [
-      { role: "user", parts: [{ text: "You are Campus Genie, a helpful friendly university assistant." }] }
-    ];
-  }
+// Mongoose settings
+mongoose.set('strictQuery', false);
 
-  sessions[sessionId].push({ role: "user", parts: [{ text: message }] });
-
+const startServer = async () => {
   try {
-    const r = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contents: sessions[sessionId] })
-      }
-    );
-
-    if (!r.ok) {
-      const text = await r.text().catch(() => '');
-      console.error('Generative API error:', r.status, text);
-      return res.status(502).json({ reply: 'AI service error.' });
+    const mongoUri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/chahida';
+    if (!process.env.MONGO_URI) {
+      console.warn(`MONGO_URI not set, falling back to local MongoDB: ${mongoUri}`);
     }
 
-    const data = await r.json().catch((err) => {
-      console.error('Failed parsing AI response:', err);
-      return null;
+    await mongoose.connect(mongoUri, { dbName: undefined });
+    console.log('MongoDB Connected to', mongoUri);
+    console.log('Mongoose readyState:', mongoose.connection.readyState);
+
+    mongoose.connection.on('error', (err) => console.error('Mongoose connection error:', err));
+    mongoose.connection.on('disconnected', () => console.warn('Mongoose disconnected'));
+
+    // Register routes
+    app.use('/api/ai', aiRoutes);
+    app.use('/api/auth', authRoutes);
+    app.use('/api/posts', postRoutes);
+    app.use('/api/lost-found', lostFoundRoutes);
+
+    // Debug route to verify DB/URI used (handy when using MongoDB Compass)
+    app.get('/api/dbinfo', (req, res) => {
+      res.json({
+        uriUsed: mongoUri,
+        readyState: mongoose.connection.readyState,
+        dbName: mongoose.connection?.db?.databaseName || null,
+      });
     });
 
-    const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Try again.";
+    // Basic health route
+    app.get('/', (req, res) => res.send('Chahida Backend Running 🚀'));
 
-    sessions[sessionId].push({ role: "model", parts: [{ text: reply }] });
-    res.json({ reply });
-  } catch {
-    console.error('AI request failed', arguments);
-    res.json({ reply: "AI offline." });
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+  } catch (err) {
+    console.error('Failed to start server or connect to MongoDB:', err);
+    process.exit(1);
   }
-});
+};
 
-app.listen(7002, () => console.log("Conversation Gemini running"));
+startServer();
