@@ -25,29 +25,48 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-app.use("/api/posts", postRoutes);
-app.use("/api/lost-found", lostFoundRoutes);
+// Ensure Mongoose uses recommended settings
+mongoose.set('strictQuery', false);
 
+const startServer = async () => {
+  try {
+    const mongoUri = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/chahida';
+    if (!process.env.MONGO_URI) {
+      console.warn(`MONGO_URI not set, falling back to local MongoDB: ${mongoUri}`);
+    }
 
-// MongoDB connection
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.log(err));
+    await mongoose.connect(mongoUri);
+    console.log('MongoDB Connected to', mongoUri);
 
-// Routes
-app.get("/", (req, res) => {
-  res.send("Chahida Backend Running 🚀");
-});
+    mongoose.connection.on('error', (err) => {
+      console.error('Mongoose connection error:', err);
+    });
+    mongoose.connection.on('disconnected', () => {
+      console.warn('Mongoose disconnected');
+    });
 
-app.get("/api/test", (req, res) => {
-  res.json({ message: "Hello from Chahida backend" });
-});
+    // Routes (registered after DB connection)
+    app.get('/', (req, res) => {
+      res.send('Chahida Backend Running 🚀');
+    });
 
-app.use("/api/auth", authRoutes);
+    app.get('/api/test', (req, res) => {
+      res.json({ message: 'Hello from Chahida backend' });
+    });
 
-// Server
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+    app.use('/api/posts', postRoutes);
+    app.use('/api/lost-found', lostFoundRoutes);
+    app.use('/api/auth', authRoutes);
+
+    // Start server after DB connected
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
+  } catch (err) {
+    console.error('Failed to connect to MongoDB:', err);
+    process.exit(1);
+  }
+};
+
+startServer();
