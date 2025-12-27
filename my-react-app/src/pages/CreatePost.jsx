@@ -71,7 +71,7 @@ export default function CreatePost(){
 
         {!isAuthed && (
           <div className="soft" style={{ padding: 12, marginTop: 10 }}>
-            <b>Tip:</b> You’re not logged in. Post will use a mock author. For hackathon demo, login makes it feel real.
+            You’re not logged in. Post will use a mock author.
           </div>
         )}
 
@@ -124,7 +124,7 @@ export default function CreatePost(){
           <div className="soft" style={{ padding: 12 }}>
             <div style={{ fontWeight: 900 }}>Category-specific fields</div>
             <div className="muted small" style={{ marginTop: 4 }}>
-              These make your demo stand out (structured data for different post types).
+              (structured data for different post types).
             </div>
 
             <div className="hr" />
@@ -184,10 +184,7 @@ export default function CreatePost(){
 
       <div className="vstack">
         <div className="card" style={{ padding: 16 }}>
-          <div style={{ fontWeight: 900 }}>Demo tricks (hackathon)</div>
-          <div className="muted small" style={{ marginTop: 6 }}>
-            Show judges: “typed data + searchable feed + status workflow”.
-          </div>
+          <div style={{ fontWeight: 900 }}><b>Tips:</b></div>
           <div className="hr" />
           <div className="vstack">
             <div className="soft" style={{ padding: 12 }}>

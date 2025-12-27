@@ -103,7 +103,7 @@ export default function BuySell() {
           <div key={item._id || item.id} className="bs-card">
             {(item.image || item.img) && <img src={item.image || item.img} style={styles.img}/>} 
             <h3>{item.title}</h3>
-            <p className="price">${item.price}</p>
+            <p className="price">BDT{item.price}</p>
             <p className="cond">{item.condition}</p>
             <p>{item.description}</p>
             <p className="contact">Contact: {item.contact}</p>

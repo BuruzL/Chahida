@@ -45,10 +45,9 @@ export default function Home(){
               A slick campus-only feed for blood needs, lost items, academic help, marketplace deals, and buddy matching.
             </p>
             <div className="pillRow" style={{ marginTop: 10 }}>
-              <span className="badge">Searchable mock data</span>
-              <span className="badge">Status workflow</span>
+              <span className="badge">Searchable data</span>
+              <span className="badge">Smart filtering</span>
               <span className="badge">Hall-based filtering</span>
-              <span className="badge">Modern UI</span>
             </div>
           </div>
 
@@ -80,7 +79,7 @@ export default function Home(){
 
       <div className="grid">
         <div className="vstack">
-          <div className="card" style={{ padding: 14, background: "rgba(220, 190, 220, 0.7)"}}>
+          <div className="card" style={{ padding: 14, background: "rgba(236, 208, 236, 0.7)"}}>
             <div className="hstack" style={{ justifyContent:"space-between" }}>
               <div style={{ fontWeight: 900, letterSpacing:"-0.02em" }}>Feed</div>
               <div className="hstack">
