@@ -40,7 +40,7 @@ export default function Home(){
       <div className="card" style={{ padding: 18, borderRadius: 26, boxShadow: "0 20px 60px rgba(11,18,32,0.10)" }}>
         <div className="hstack" style={{ justifyContent:"space-between", alignItems:"flex-start" }}>
           <div>
-            <h1 className="title">Campus Hub</h1>
+            <h1 className="title" >Chahida</h1>
             <p className="subtitle">
               A slick campus-only feed for blood needs, lost items, academic help, marketplace deals, and buddy matching.
             </p>
