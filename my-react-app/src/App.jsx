@@ -16,35 +16,29 @@ import BuySell from "./pages/BuySell";
 import Buddy from "./pages/Buddy";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
-import CampusGenie from "./components/ai/CampusGenie";
 
-export default function App() {
+export default function App(){
   return (
-    <>
-      {/* Floating AI Genie always visible */}
-      <CampusGenie />
-
-      <BrowserRouter>
-        <AuthProvider>
-          <Layout>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<AuthLogin />} />
-              <Route path="/signup" element={<AuthSignup />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/blood-bank" element={<BloodBank />} />
-              <Route path="/post/:id" element={<PostDetails />} />
-              <Route path="/create" element={<CreatePost />} />
-              <Route path="/category/:tag" element={<Category />} />
-              <Route path="/lost-found" element={<LostFound />} />
-              <Route path="/buy-sell" element={<BuySell />} />
-              <Route path="/buddy" element={<Buddy />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Layout>
-        </AuthProvider>
-      </BrowserRouter>
-    </>
+    <BrowserRouter>
+      <AuthProvider>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<AuthLogin />} />
+            <Route path="/signup" element={<AuthSignup />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/blood-bank" element={<BloodBank />} />
+            <Route path="/post/:id" element={<PostDetails />} />
+            <Route path="/create" element={<CreatePost />} />
+            <Route path="/category/:tag" element={<Category />} />
+            <Route path="/lost-found" element={<LostFound/>}/>
+            <Route path="/buy-sell" element={<BuySell />} />
+            <Route path="/buddy" element={<Buddy />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Layout>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }

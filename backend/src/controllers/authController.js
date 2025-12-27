@@ -1,25 +1,42 @@
-const User = require("../models/User");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+import User from "../models/User.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
-exports.register = async (req, res) => {
-  const { name, email, password } = req.body;
+export const register = async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
 
-  const hashed = await bcrypt.hash(password, 10);
-  const user = await User.create({ name, email, password: hashed });
+    const hashed = await bcrypt.hash(password, 10);
+    const user = await User.create({ name, email, password: hashed });
 
-  res.json(user);
+    res.json(user);
+  } catch (err) {
+    res.status(400).json(err);
+  }
 };
 
-exports.login = async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
+export const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
 
-  if (!user) return res.status(400).json({ error: "User not found" });
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ error: "User not found" });
+    }
 
-  const ok = await bcrypt.compare(password, user.password);
-  if (!ok) return res.status(400).json({ error: "Wrong password" });
+    const ok = await bcrypt.compare(password, user.password);
+    if (!ok) {
+      return res.status(400).json({ error: "Wrong password" });
+    }
 
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-  res.json({ token, user });
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
+
+    res.json({ token, user });
+  } catch (err) {
+    res.status(500).json(err);
+  }
 };
