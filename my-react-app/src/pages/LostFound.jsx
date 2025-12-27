@@ -1,34 +1,66 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../lostfound.css";
+import { api } from "../lib/api";
 
 export default function LostAndFound() {
   const [items, setItems] = useState([]);
   const [form, setForm] = useState({
-    type: "Lost",
-    name: "",
+    type: "lost",
+    title: "",
     location: "",
     description: "",
-    img: ""
+    image: ""
   });
 
-  const styles= {
-    img:{
+  const styles = {
+    img: {
       width: "100%",
       maxWidth: "260px",
       aspectRatio: 4 / 3,
       objectFit: "cover",
       borderRadius: "12px"
     },
-    
-    type:{
-      color: "Red"
+    type: {
+      color: "red"
     }
-  }
+  };
 
-  const postItem = () => {
-    if (!form.name || !form.location) return;
-    setItems(prev => [{ ...form, id: Date.now() }, ...prev]);
-    setForm({ type: "Lost", name: "", location: "", description: "" , img: ""});
+ 
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await api.get("/api/lost-found");
+        setItems(data || []);
+      } catch (err) {
+        console.error(err);
+      }
+    })();
+  }, []);
+
+ 
+  const postItem = async () => {
+    if (!form.title || !form.location) return;
+
+    // optimistic UI update
+    const temp = { ...form, _id: `temp-${Date.now()}` };
+    setItems((prev) => [temp, ...prev]);
+
+    try {
+      const saved = await api.post("/api/lost-found", form);
+      // replace temp with saved
+      setItems((prev) => prev.map((p) => (p._id === temp._id ? saved : p)));
+    } catch (err) {
+      console.error(err);
+      // leave optimistic entry but mark or notify in real app
+    }
+
+    setForm({
+      type: "lost",
+      title: "",
+      location: "",
+      description: "",
+      image: "",
+    });
   };
 
   return (
@@ -38,38 +70,49 @@ export default function LostAndFound() {
       <div className="lf-form">
         <select
           value={form.type}
-          onChange={(e) => setForm({ ...form, type: e.target.value })}
+          onChange={(e) =>
+            setForm({ ...form, type: e.target.value })
+          }
         >
-          <option>Lost</option>
-          <option>Found</option>
+          <option value="lost">Lost</option>
+          <option value="found">Found</option>
         </select>
 
         <input
           placeholder="Item name"
-          value={form.name}
-          onChange={(e) => setForm({ ...form, name: e.target.value })}
+          value={form.title}
+          onChange={(e) =>
+            setForm({ ...form, title: e.target.value })
+          }
         />
 
         <input
           placeholder="Location"
           value={form.location}
-          onChange={(e) => setForm({ ...form, location: e.target.value })}
+          onChange={(e) =>
+            setForm({ ...form, location: e.target.value })
+          }
         />
 
         <textarea
           placeholder="Description"
           value={form.description}
-          onChange={(e) => setForm({ ...form, description: e.target.value })}
+          onChange={(e) =>
+            setForm({ ...form, description: e.target.value })
+          }
         />
+
         <input
           type="file"
           accept="image/*"
           onChange={(e) => {
             const file = e.target.files[0];
             if (!file) return;
-
-            const imageURL = URL.createObjectURL(file);
-            setForm(prev => ({ ...prev, img: imageURL }));
+            const reader = new FileReader();
+            reader.onload = () => {
+              setForm((prev) => ({ ...prev, image: reader.result }));
+            };
+            reader.readAsDataURL(file);
           }}
         />
 
@@ -78,10 +121,16 @@ export default function LostAndFound() {
 
       <div className="lf-list">
         {items.map((item) => (
-          <div key={item.id} className="lf-card">
-            {item.img && <img src={item.img} style={styles.img}/>}
-            <h3 style={styles.type}>{item.type}: {item.name}</h3>
-            <p className="loc">Location: {item.location}</p>
+          <div key={item._id} className="lf-card">
+            {item.image && (
+              <img src={item.image} style={styles.img} />
+            )}
+            <h3 style={styles.type}>
+              {item.type.toUpperCase()}: {item.title}
+            </h3>
+            <p className="loc">
+              Location: {item.location}
+            </p>
             <p>{item.description}</p>
           </div>
         ))}

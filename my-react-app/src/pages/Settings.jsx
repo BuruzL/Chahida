@@ -16,7 +16,6 @@ export default function Settings(){
     <div className="card" style={{ padding: 16, maxWidth: 760 }}>
       <div style={{ fontWeight: 900, fontSize: 18 }}>Settings</div>
       <div className="muted small" style={{ marginTop: 6 }}>
-        Tools for hackathon demos.
       </div>
       <div className="hr" />
 

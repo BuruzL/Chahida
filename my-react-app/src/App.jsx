@@ -17,28 +17,35 @@ import Buddy from "./pages/Buddy";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
-export default function App(){
+import SupportChatbot from "./components/Chatbot/SupportChatbot";
+
+export default function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <Layout>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<AuthLogin />} />
-            <Route path="/signup" element={<AuthSignup />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/blood-bank" element={<BloodBank />} />
-            <Route path="/post/:id" element={<PostDetails />} />
-            <Route path="/create" element={<CreatePost />} />
-            <Route path="/category/:tag" element={<Category />} />
-            <Route path="/lost-found" element={<LostFound/>}/>
-            <Route path="/buy-sell" element={<BuySell />} />
-            <Route path="/buddy" element={<Buddy />} />
-            <Route path="/settings" element={<Settings />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Layout>
-      </AuthProvider>
-    </BrowserRouter>
+    <>
+      {/* Floating AI Support Widget */}
+      <SupportChatbot />
+
+      <BrowserRouter>
+        <AuthProvider>
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<AuthLogin />} />
+              <Route path="/signup" element={<AuthSignup />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/blood-bank" element={<BloodBank />} />
+              <Route path="/post/:id" element={<PostDetails />} />
+              <Route path="/create" element={<CreatePost />} />
+              <Route path="/category/:tag" element={<Category />} />
+              <Route path="/lost-found" element={<LostFound />} />
+              <Route path="/buy-sell" element={<BuySell />} />
+              <Route path="/buddy" element={<Buddy />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Layout>
+        </AuthProvider>
+      </BrowserRouter>
+    </>
   );
 }

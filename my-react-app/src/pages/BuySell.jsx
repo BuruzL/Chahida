@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../buysell.css";
+import { api } from "../lib/api";
 
 export default function BuySell() {
   const [items, setItems] = useState([]);
@@ -24,9 +25,39 @@ export default function BuySell() {
 
   const postItem = () => {
     if (!form.title || !form.price || !form.contact) return;
-    setItems(prev => [{ ...form, id: Date.now() }, ...prev]);
-    setForm({ title: "", price: "", condition: "New", description: "", contact: "" });
+    const temp = { ...form, _id: `temp-${Date.now()}`, image: form.img };
+    setItems((prev) => [temp, ...prev]);
+    setForm({ title: "", price: "", condition: "New", description: "", contact: "", img: "" });
+
+    (async () => {
+      try {
+        const payload = {
+          type: "sell",
+          title: form.title,
+          price: Number(form.price),
+          condition: form.condition,
+          description: form.description,
+          contact: form.contact,
+          image: form.img || "",
+        };
+        const saved = await api.post("/api/posts", payload);
+        setItems((prev) => prev.map((p) => (p._id === temp._id ? saved : p)));
+      } catch (err) {
+        console.error(err);
+      }
+    })();
   };
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const data = await api.get("/api/posts");
+        setItems(data || []);
+      } catch (err) {
+        console.error(err);
+      }
+    })();
+  }, []);
 
   return (
     <div className="bs-page">
@@ -52,23 +83,25 @@ export default function BuySell() {
         <textarea placeholder="Description" value={form.description}
           onChange={e => setForm({ ...form, description: e.target.value })} />
           <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            const imageURL = URL.createObjectURL(file);
-            setForm(prev => ({ ...prev, img: imageURL }));
-          }}
-        />
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              if (!file) return;
+              const reader = new FileReader();
+              reader.onload = () => {
+                setForm((prev) => ({ ...prev, img: reader.result }));
+              };
+              reader.readAsDataURL(file);
+            }}
+          />
         <button onClick={postItem}>Post Item</button>
       </div>
 
       <div className="bs-list">
         {items.map(item => (
-          <div key={item.id} className="bs-card">
-            {item.img && <img src={item.img} style={styles.img}/>}
+          <div key={item._id || item.id} className="bs-card">
+            {(item.image || item.img) && <img src={item.image || item.img} style={styles.img}/>} 
             <h3>{item.title}</h3>
             <p className="price">${item.price}</p>
             <p className="cond">{item.condition}</p>

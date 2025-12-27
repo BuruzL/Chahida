@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { getDB } from "../lib/db";
+import { api } from "../lib/api";
 
 const AuthCtx = createContext(null);
 
@@ -14,13 +15,45 @@ export function AuthProvider({ children }) {
 
   const value = useMemo(() => {
     const db = getDB();
-    const user = session?.email ? db.users.find((u) => u.email === session.email) : null;
+
+    let user = null;
+    if (session?.user) user = session.user;
+    else if (session?.email) user = db.users.find((u) => u.email === session.email);
 
     return {
       user,
       isAuthed: !!user,
-      login: (email) => setSession({ email }),
-      logout: () => setSession(null),
+      // login can be called as login(email) for local/mock auth,
+      // or login(email, password) to authenticate against the backend.
+      login: async (email, password) => {
+        if (password) {
+          try {
+            const data = await api.post("/api/auth/login", { email, password });
+            api.setToken(data.token);
+            setSession({ user: data.user, token: data.token });
+            return data;
+          } catch (err) {
+            // fallback to local/mock DB when backend login fails
+            try {
+              const db = getDB();
+              const localUser = db.users.find((u) => u.email === email);
+              if (localUser) {
+                setSession({ user: localUser });
+                return { user: localUser };
+              }
+            } catch (e) {
+              // ignore local fallback errors
+            }
+            throw err;
+          }
+        }
+        // fallback to local/mock DB login
+        setSession({ email });
+      },
+      logout: () => {
+        api.setToken(null);
+        setSession(null);
+      },
     };
   }, [session]);
 

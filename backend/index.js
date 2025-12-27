@@ -1,46 +1,44 @@
 import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import cors from "cors";
-import mongoose from "mongoose";
-
-import authRoutes from "./src/routes/authRoutes.js";
-
-import postRoutes from "./src/routes/postRoutes.js";
-
-import lostFoundRoutes from "./src/routes/lostFoundRoutes.js";
-
-
-
-dotenv.config();
 
 const app = express();
-
+app.use(cors());
 app.use(express.json());
 
-app.use("/api/posts", postRoutes);
-app.use("/api/lost-found", lostFoundRoutes);
-app.use(cors());
+const sessions = {};
+console.log("GEMINI:", process.env.GEMINI_API_KEY ? "LOADED" : "MISSING");
 
+app.post("/api/ai/ask", async (req, res) => {
+  const { message, sessionId = "default" } = req.body;
 
-// MongoDB connection
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => console.log("MongoDB Connected"))
-  .catch((err) => console.log(err));
+  if (!sessions[sessionId]) {
+    sessions[sessionId] = [
+      { role: "user", parts: [{ text: "You are Campus Genie, a helpful friendly university assistant." }] }
+    ];
+  }
 
-// Routes
-app.get("/", (req, res) => {
-  res.send("Chahida Backend Running 🚀");
+  sessions[sessionId].push({ role: "user", parts: [{ text: message }] });
+
+  try {
+    const r = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ contents: sessions[sessionId] })
+      }
+    );
+
+    const data = await r.json();
+    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Try again.";
+
+    sessions[sessionId].push({ role: "model", parts: [{ text: reply }] });
+    res.json({ reply });
+  } catch {
+    res.json({ reply: "AI offline." });
+  }
 });
 
-app.get("/api/test", (req, res) => {
-  res.json({ message: "Hello from Chahida backend" });
-});
-
-app.use("/api/auth", authRoutes);
-
-// Server
-const PORT = 7002;
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-});
+app.listen(7002, () => console.log("Conversation Gemini running"));
