@@ -1,0 +1,40 @@
+.genie-tab {
+  background: linear-gradient(135deg, #7c3aed, #a855f7);
+  border-radius: 999px;
+  box-shadow: 0 12px 30px rgba(124,58,237,0.45);
+  backdrop-filter: blur(12px);
+  color: white;
+}
+
+.genie-askbar {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 260px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.25);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,0.3);
+  box-shadow: 0 12px 25px rgba(124,58,237,0.35);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 9998;
+}
+
+.genie-askbar input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #4c1d95;
+}
+
+.genie-panel {
+  background: rgba(255,255,255,0.85);
+  backdrop-filter: blur(16px);
+  border-radius: 28px;
+  box-shadow: 0 25px 60px rgba(124,58,237,0.45);
+  border: 1px solid rgba(124,58,237,0.25);
+}

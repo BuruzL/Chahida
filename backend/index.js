@@ -19,7 +19,7 @@ app.get("/api/test", (req, res) => {
   res.json({ message: "Hello from Chahida backend" });
 });
 
-const PORT = 5000;
+const PORT = 7002;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
@@ -27,3 +27,5 @@ app.listen(PORT, () => {
 const authRoutes = require("./src/routes/authRoutes");
 app.use("/api/auth", authRoutes);
 
+import genieRoutes from "./src/routes/genieRoutes.js";
+app.use("/api/genie", genieRoutes);
