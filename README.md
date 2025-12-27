@@ -1,29 +1,29 @@
-🌐 ###<b>Chahida — Your All-in-One Student Support Platform</b>
+🌐 <h3><b><i>Chahida — Your All-in-One Student Support Platform</i></b></h3>
 
 Because finding help should never be difficult.
 
-🚀 ###<b>About Chahida</b>
+🚀 <h3><b>About Chahida</b></h3>
 
 Chahida is a unified web application designed to simplify campus life by bringing essential student services into one centralized platform. It eliminates the need to switch between multiple applications, personal contacts, and social media platforms — making support, communication, and opportunities easily accessible for every student.
 
 Whether you are searching for urgent assistance, academic collaboration, or entrepreneurial opportunities, Chahida connects you to what you need, when you need it.
 
-❓ ###<b>Why Chahida?</b>
+❓ <h3><b>Why Chahida?</b></h3>
 Are you tired of searching through multiple platforms just to find help?
 Do you have a limited personal network and struggle to get timely support?
 
 Chahida is built to solve this problem.
 
-✨ ###<b>Key Features</b>
+✨ <h3><b>Key Features</b></h3>
 🏠 Centralized Homepage
 
 Stay updated with real-time student posts and campus activities — all in one place.
 
-🩸 ####<b>Blood Bank</b>
+🩸 <b>Blood Bank</b>
 
 Instantly access verified blood donor contacts in emergency situations.
 
-🔎 ####<b>Lost & Found</b>
+🔎 <b>Lost & Found</b>
 
 Post lost items or found belongings and reconnect them with their rightful owners.
 
@@ -31,25 +31,25 @@ Post lost items or found belongings and reconnect them with their rightful owner
 
 Buy, sell, and promote your services — empowering students to start their side hustle with ease.
 
-📚 ####<b>Study Partner Finder</b>
+📚 <b>Study Partner Finder</b>
 
 Connect with like-minded students who are also searching for study buddies.
 
-🕶 ####<b>Anonymous Support</b>
+🕶 <b>Anonymous Support</b>
 
 Need help privately? Chahida allows anonymous interaction to protect your privacy.
 
-🔐 ####<b>Easy Access</b>
+🔐 <b>Easy Access</b>
 
 All you need to unlock the full power of Chahida is a simple account registration — and you are ready to explore all features.
 
-🧠 ####<b>Built With Purpose</b>
+🧠 <b>Built With Purpose</b>
 
 Chahida is more than an application — it is a community.
 We’ve got you. In every case.
 
 
-##<b>Tech Stack</b>
+<b>Tech Stack</b>
 <ul>
   <li>React + Vite</li>
   <li>React router</li>
@@ -59,13 +59,13 @@ We’ve got you. In every case.
   <li>MongoDB</li>
 </ul>
 
-Run Locally
+<b>Run Locally</b>
 git clone https://github.com/BuruzL/Chahida.git
 cd Chahida
 npm install
 npm run dev
 
-Demo Tips
+<b>Demo Tips</b>
 
 Login using any email from Director or create your own account
 
